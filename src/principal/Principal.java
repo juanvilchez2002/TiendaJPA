@@ -19,6 +19,7 @@ public class Principal {
             EntityManagerFactory emf  = Persistence.createEntityManagerFactory("TiendaJPAPU");
             EntityManager em = emf.createEntityManager();
             
+            EntityManager em1 = Persistence.createEntityManagerFactory("TiendaJPAPU").createEntityManager();
             /*
             try{
                 //creando 02 registros de fabricante
@@ -101,16 +102,48 @@ public class Principal {
             try{
                 
                 Producto prod2 = (Producto) em.createQuery("SELECT p FROM Producto p WHERE"
-                    + " p.codigo=:codigo").setParameter("codigo", 150).
+                    + " p.codigo=:codigo").setParameter("codigo", 100).
                     getSingleResult();
                 
             }catch(NoResultException e){
                 System.out.println("No se encontro el producto para el codigo indicado");
             }
             
+            //buscando un Fabricante por criterio y modificar el nombre
+            try{
+                //busco por criterio
+                int codigos = 1;
+                Fabricante fabricante = (Fabricante) em.createQuery("SELECT f FROM Fabricante f "
+                        +"WHERE f.codigo = :codigos").setParameter("codigos", codigos).
+                        getSingleResult();
+                
+                //imprimiendo el resultado
+                System.out.println("Fabricante encontrado:");
+                System.out.println(fabricante.toString());
+                
+                System.out.println("");
+                fabricante.setNombre("Lenovo");
+                em.getTransaction().begin();
+                em.merge(fabricante);
+                em.getTransaction().commit();
+                
+                fabricante = (Fabricante) em.createQuery("SELECT f FROM Fabricante f "
+                        +"WHERE f.codigo = :codigos").setParameter("codigos", codigos).
+                        getSingleResult();
+                
+                System.out.println("Fabricante actualizado:");
+                System.out.println(fabricante.toString());
+            }catch(Exception e){
+                throw e;
+            }  
+            
+            
         }catch(Exception ex){
             throw ex;
         }
+               
     }
+    
+      
     
 }
